@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+
+# Model files (too large for GitHub - share via Google Drive/Hugging Face)
+*.pth
+*.pkl
+*.h5
+*.onnx
+
+# Uploads
+uploads/
+*.mp4
+*.avi
+*.mov
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
