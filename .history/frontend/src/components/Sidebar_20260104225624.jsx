@@ -127,7 +127,7 @@ const Sidebar = () => {
                     </Typography>
                     <Tooltip title="View on GitHub" arrow>
                         <IconButton
-                            href="https://github.com/mzainnasir010/SmartAction-Recognition"
+                            href="https://github.com/mzainnasir010/SmartAction-Recognition.git"
                             target="_blank"
                             size="small"
                             sx={{
