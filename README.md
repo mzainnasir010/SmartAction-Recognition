@@ -1,53 +1,48 @@
 # Action Recognition Web Application
 
-A professional full-stack application for human action recognition using Deep Learning (CNN-LSTM).
+A full-stack application for human action recognition using Deep Learning (CNN-LSTM).
+
+## Features
+- **8 Action Classes**: Basketball, Bowling, GolfSwing, TennisSwing, Drumming, PushUps, PullUps, JumpingJack
+- **Auto-download Models**: Fetches trained model from Hugging Face on startup
+- **Modern UI**: React + Vite with Material UI and Framer Motion animations
 
 ## Project Structure
-- `backend/`: Flask REST API serving the PyTorch model.
-- `frontend/`: React + Vite application with Material UI.
+- `backend/`: Flask REST API with PyTorch inference
+- `frontend/`: React dashboard with video upload
 
 ## Prerequisites
 - Python 3.8+
 - Node.js 16+
-- PyTorch Model (`action_recognition_model.pth`) and Label Encoder (`label_encoder.pkl`)
 
 ## Setup Instructions
 
 ### 1. Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Create `action_recognition_model.pth` and `label_encoder.pkl` inside `backend/src/models/`.
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Run the server:
-   ```bash
-   python run.py
-   ```
-   Server runs on `http://localhost:5000`.
+```bash
+cd backend
+pip install -r requirements.txt
+python run.py
+```
+Server runs on `http://localhost:5000`. Models are automatically downloaded from [Hugging Face](https://huggingface.co/zainnasir010/action-recognition-cnn-lstm).
 
 ### 2. Frontend Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-   Frontend runs on `http://localhost:5173`.
-
-## Environment Variables
-Create a `.env` file in `backend/` if needed (currently using `config.py` defaults).
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Frontend runs on `http://localhost:5173`.
 
 ## Usage
-1. Open the frontend URL.
-2. Drag and drop a video file (.mp4, .avi).
-3. View the predicted action and confidence score.
+1. Open the frontend URL
+2. Navigate to "Analyze" page
+3. Upload a video file (.mp4, .avi, .mov)
+4. View the predicted action and confidence score
+
+## Model
+- **Architecture**: ResNet50 (CNN) + Bidirectional LSTM
+- **Dataset**: UCF-101 (filtered to 8 classes)
+- **Hosted on**: [Hugging Face](https://huggingface.co/zainnasir010/action-recognition-cnn-lstm)
+
+## Author
+M. Zain Nasir - [GitHub](https://github.com/mzainnasir010)
