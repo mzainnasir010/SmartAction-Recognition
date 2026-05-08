@@ -60,7 +60,7 @@ const Sidebar = () => {
                         NeuralMotion
                     </Typography>
                     <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
-                        Action Recognition
+                        CNN-LSTM
                     </Typography>
                 </Box>
             </Box>

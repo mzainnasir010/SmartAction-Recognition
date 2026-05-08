@@ -113,7 +113,8 @@ const Analysis = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/api/predict', formData, {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const response = await axios.post(`${apiUrl}/predict`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 timeout: 120000, // 2 minute timeout for large videos
                 maxContentLength: 50 * 1024 * 1024,

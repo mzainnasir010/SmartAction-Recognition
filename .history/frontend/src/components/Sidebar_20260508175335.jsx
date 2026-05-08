@@ -57,10 +57,10 @@ const Sidebar = () => {
 
                 <Box>
                     <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.2, color: 'text.primary' }}>
-                        NeuralMotion
+                        ActionAI
                     </Typography>
                     <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
-                        Action Recognition
+                        CNN-LSTM
                     </Typography>
                 </Box>
             </Box>

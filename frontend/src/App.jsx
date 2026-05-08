@@ -9,7 +9,7 @@ import About from './pages/About';
 import VideoLibrary from './pages/VideoLibrary';
 
 function App() {
-  const [mode, setMode] = useState('dark');
+  const [mode, setMode] = useState('light');
 
   const theme = useMemo(() => getTheme(mode), [mode]);
 

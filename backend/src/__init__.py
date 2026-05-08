@@ -8,7 +8,7 @@ def create_app():
     app.config.from_object(Config)
     
     # Enable CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}}) # Allow all for development, or specify localhost:5173
+    CORS(app, resources={r"/api/*": {"origins": app.config['CORS_ALLOWED_ORIGINS']}})
     
     # Initialize Config (create dirs)
     Config.ensure_dirs()
