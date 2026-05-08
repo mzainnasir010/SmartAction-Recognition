@@ -5,9 +5,11 @@ import { getTheme } from './theme';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Analysis from './pages/Analysis';
+import About from './pages/About';
+import VideoLibrary from './pages/VideoLibrary';
 
 function App() {
-  const [mode, setMode] = useState('light');
+  const [mode, setMode] = useState('dark');
 
   const theme = useMemo(() => getTheme(mode), [mode]);
 
@@ -22,6 +24,8 @@ function App() {
           <Route path="/" element={<Layout toggleTheme={toggleTheme} mode={mode} />}>
             <Route index element={<Home />} />
             <Route path="analysis" element={<Analysis />} />
+            <Route path="about" element={<About />} />
+            <Route path="library" element={<VideoLibrary />} />
           </Route>
         </Routes>
       </Router>

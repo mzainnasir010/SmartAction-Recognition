@@ -28,7 +28,7 @@ const UploadZone = ({ onFileSelect, isLoading, previewUrl }) => {
                     borderRadius: 4,
                     border: '2px dashed',
                     borderColor: isDragActive ? 'primary.main' : 'divider',
-                    bgcolor: isDragActive ? alpha('#0ea5e9', 0.05) : 'background.paper',
+                    bgcolor: isDragActive ? (theme) => alpha(theme.palette.primary.main, 0.05) : 'background.paper',
                     cursor: isLoading ? 'default' : 'pointer',
                     textAlign: 'center',
                     minHeight: 300,
@@ -37,7 +37,7 @@ const UploadZone = ({ onFileSelect, isLoading, previewUrl }) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     transition: 'all 0.3s ease',
-                    '&:hover': { borderColor: 'primary.main', bgcolor: alpha('#0ea5e9', 0.02) },
+                    '&:hover': { borderColor: 'primary.main', bgcolor: (theme) => alpha(theme.palette.primary.main, 0.02) },
                 }}
             >
                 <input {...getInputProps()} />
@@ -59,7 +59,7 @@ const UploadZone = ({ onFileSelect, isLoading, previewUrl }) => {
                     </Box>
                 ) : (
                     <>
-                        <Box sx={{ width: 80, height: 80, borderRadius: 3, bgcolor: alpha('#0ea5e9', 0.1), display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3, color: 'primary.main' }}>
+                        <Box sx={{ width: 80, height: 80, borderRadius: 3, bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1), display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3, color: 'primary.main' }}>
                             <CloudUploadOutlined sx={{ fontSize: 40 }} />
                         </Box>
                         <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>{isDragActive ? 'Drop it here' : 'Upload Video'}</Typography>

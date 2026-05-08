@@ -17,24 +17,11 @@ const Header = ({ toggleTheme, mode }) => {
             <Toolbar sx={{ minHeight: 64, px: { xs: 2, md: 3 } }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Typography
-                        variant="body1"
-                        sx={{ fontWeight: 600, color: 'text.primary', display: { xs: 'none', sm: 'block' } }}
+                        variant="body2"
+                        sx={{ fontWeight: 700, color: 'text.primary', letterSpacing: 1.5, display: { xs: 'none', sm: 'block' } }}
                     >
-                        Action Recognition
+                        SYSTEM DASHBOARD
                     </Typography>
-                    <Chip
-                        label="BETA"
-                        size="small"
-                        sx={{
-                            height: 20,
-                            fontSize: '0.65rem',
-                            fontWeight: 700,
-                            bgcolor: alpha('#0ea5e9', 0.15),
-                            color: 'primary.main',
-                            border: '1px solid',
-                            borderColor: alpha('#0ea5e9', 0.3),
-                        }}
-                    />
                 </Box>
                 <Box sx={{ flexGrow: 1 }} />
                 <IconButton
@@ -44,13 +31,18 @@ const Header = ({ toggleTheme, mode }) => {
                         bgcolor: 'background.paper',
                         border: '1px solid',
                         borderColor: 'divider',
-                        '&:hover': { bgcolor: alpha('#0ea5e9', 0.1) },
+                        transition: 'all 0.2s',
+                        '&:hover': { 
+                            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                            borderColor: 'primary.main',
+                            transform: 'rotate(15deg)'
+                        },
                     }}
                 >
                     {mode === 'dark' ? (
-                        <LightModeOutlined fontSize="small" sx={{ color: 'text.secondary' }} />
+                        <LightModeOutlined fontSize="small" sx={{ color: 'primary.main' }} />
                     ) : (
-                        <DarkModeOutlined fontSize="small" sx={{ color: 'text.secondary' }} />
+                        <DarkModeOutlined fontSize="small" sx={{ color: 'primary.main' }} />
                     )}
                 </IconButton>
             </Toolbar>

@@ -12,14 +12,14 @@ import {
 
 // The 8 supported action classes from the trained model
 const SUPPORTED_ACTIONS = [
-    { id: 1, title: 'Basketball', icon: SportsBasketball, color: '#f59e0b' },
-    { id: 2, title: 'Bowling', icon: SportsCricket, color: '#3b82f6' },
-    { id: 3, title: 'Golf Swing', icon: SportsGolf, color: '#10b981' },
-    { id: 4, title: 'Tennis Swing', icon: SportsTennis, color: '#14b8a6' },
-    { id: 5, title: 'Drumming', icon: MusicNote, color: '#8b5cf6' },
-    { id: 6, title: 'Push Ups', icon: FitnessCenter, color: '#ef4444' },
-    { id: 7, title: 'Pull Ups', icon: FitnessCenter, color: '#ec4899' },
-    { id: 8, title: 'Jumping Jack', icon: FitnessCenter, color: '#0ea5e9' },
+    { id: 1, title: 'Basketball', icon: SportsBasketball },
+    { id: 2, title: 'Bowling', icon: SportsCricket },
+    { id: 3, title: 'Golf Swing', icon: SportsGolf },
+    { id: 4, title: 'Tennis Swing', icon: SportsTennis },
+    { id: 5, title: 'Drumming', icon: MusicNote },
+    { id: 6, title: 'Push Ups', icon: FitnessCenter },
+    { id: 7, title: 'Pull Ups', icon: FitnessCenter },
+    { id: 8, title: 'Jumping Jack', icon: FitnessCenter },
 ];
 
 const SampleVideos = () => {
@@ -53,9 +53,12 @@ const SampleVideos = () => {
                                         borderRadius: 3,
                                         cursor: 'default',
                                         transition: 'all 0.3s ease',
+                                        bgcolor: 'background.paper',
+                                        border: '1px solid',
+                                        borderColor: 'divider',
                                         '&:hover': {
-                                            borderColor: action.color,
-                                            boxShadow: `0 0 20px ${alpha(action.color, 0.2)}`,
+                                            borderColor: 'primary.main',
+                                            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.02),
                                         },
                                     }}
                                 >
@@ -64,7 +67,7 @@ const SampleVideos = () => {
                                             width: 48,
                                             height: 48,
                                             borderRadius: 2,
-                                            bgcolor: alpha(action.color, 0.1),
+                                            bgcolor: (theme) => alpha(theme.palette.text.primary, 0.05),
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
@@ -72,7 +75,7 @@ const SampleVideos = () => {
                                             mb: 2,
                                         }}
                                     >
-                                        <IconComponent sx={{ fontSize: 24, color: action.color }} />
+                                        <IconComponent sx={{ fontSize: 24, color: 'text.primary' }} />
                                     </Box>
                                     <Typography
                                         variant="body2"
@@ -93,8 +96,9 @@ const SampleVideos = () => {
                     mt: 4,
                     p: 3,
                     borderRadius: 2,
-                    bgcolor: alpha('#0ea5e9', 0.05),
-                    borderColor: alpha('#0ea5e9', 0.2)
+                    bgcolor: 'background.paper',
+                    border: '1px solid',
+                    borderColor: 'divider'
                 }}
             >
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>

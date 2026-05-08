@@ -4,6 +4,7 @@ from werkzeug.exceptions import RequestEntityTooLarge
 import os
 import time
 from ..services.inference_service import InferenceService
+from ..services.youtube_service import YouTubeService
 from ..config import Config
 
 predict_bp = Blueprint('predict', __name__, url_prefix='/api')
@@ -21,31 +22,34 @@ def handle_file_too_large(e):
 
 @predict_bp.route('/predict', methods=['POST'])
 def predict():
-    # Check if video file is in request
-    if 'video' not in request.files:
-        return jsonify({'error': 'No video file provided. Please upload a video.'}), 400
+    filepath = None
     
-    file = request.files['video']
+    # CASE 1: Video URL (YouTube or Direct Link)
+    video_url = request.form.get('video_url')
+    if video_url:
+        filepath = YouTubeService.download_video(video_url)
+        if not filepath:
+            return jsonify({'error': 'Failed to download video from URL. Please ensure it is a valid YouTube link.'}), 422
     
-    # Check if file was selected
-    if file.filename == '':
-        return jsonify({'error': 'No file selected. Please choose a video file.'}), 400
+    # CASE 2: Uploaded File
+    elif 'video' in request.files:
+        file = request.files['video']
+        if file.filename == '':
+            return jsonify({'error': 'No file selected.'}), 400
+        
+        if not allowed_file(file.filename):
+            ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else 'unknown'
+            return jsonify({'error': f'Invalid file type (.{ext}).'}), 415
+            
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(Config.UPLOAD_FOLDER, filename)
+        file.save(filepath)
     
-    # Check file extension
-    if not allowed_file(file.filename):
-        ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else 'unknown'
-        return jsonify({
-            'error': f'Invalid file type (.{ext}). Allowed formats: MP4, AVI, MOV.'
-        }), 415
-    
-    filename = secure_filename(file.filename)
-    filepath = os.path.join(Config.UPLOAD_FOLDER, filename)
+    else:
+        return jsonify({'error': 'No video file or URL provided.'}), 400
     
     try:
-        # Save uploaded file
-        file.save(filepath)
-        
-        # Check file size after save (backup check)
+        # Check file size after save or download
         file_size = os.path.getsize(filepath)
         if file_size > Config.MAX_CONTENT_LENGTH:
             os.remove(filepath)
@@ -66,6 +70,7 @@ def predict():
         return jsonify({
             'action': result['action'],
             'confidence': result['confidence'],
+            'probabilities': result['probabilities'],
             'processing_time': processing_time
         })
         

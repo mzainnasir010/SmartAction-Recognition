@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Box, Typography, Snackbar, Alert } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Snackbar, Alert, CircularProgress } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import UploadZone from '../components/UploadZone';
 import ResultCard from '../components/ResultCard';
@@ -37,11 +38,43 @@ const getErrorMessage = (error) => {
 };
 
 const Analysis = () => {
+    const location = useLocation();
     const [file, setFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [result, setResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // Handle prefilled video from library
+    useEffect(() => {
+        if (location.state?.isFromLibrary && location.state?.prefilledVideoUrl) {
+            const prefilledUrl = location.state.prefilledVideoUrl;
+            const prefilledName = location.state.videoName || 'library_video.mp4';
+            
+            // Set basic state for UI
+            setPreviewUrl(prefilledUrl);
+            setFile({
+                name: prefilledName,
+                type: 'video/mp4',
+                isLibraryVideo: true,
+                url: prefilledUrl
+            });
+            setResult(null);
+            setError(null);
+
+            // Automatically trigger analysis
+            analyzeLibraryVideo(prefilledUrl, prefilledName);
+            
+            // Clear history state
+            window.history.replaceState({}, document.title);
+        }
+    }, [location]);
+
+    const analyzeLibraryVideo = async (url, name) => {
+        setIsLoading(true);
+        // Instead of fetching blob locally, we send the URL to the backend
+        await predictAction(null, url);
+    };
 
     const handleFileSelect = async (selectedFile) => {
         // Client-side validation first
@@ -63,19 +96,21 @@ const Analysis = () => {
         setFile(selectedFile);
         setResult(null);
         setError(null);
-
         const url = URL.createObjectURL(selectedFile);
         setPreviewUrl(url);
-
         await predictAction(selectedFile);
     };
 
-    const predictAction = async (videoFile) => {
+    const predictAction = async (videoFile, videoUrl = null) => {
         setIsLoading(true);
         setError(null);
 
         const formData = new FormData();
-        formData.append('video', videoFile);
+        if (videoUrl) {
+            formData.append('video_url', videoUrl);
+        } else {
+            formData.append('video', videoFile);
+        }
 
         try {
             const response = await axios.post('http://localhost:5000/api/predict', formData, {

@@ -6,10 +6,32 @@ import PropTypes from 'prop-types';
 
 const CircularProgressWithLabel = ({ value }) => (
     <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-        <CircularProgress variant="determinate" value={100} size={100} thickness={3} sx={{ color: alpha('#0ea5e9', 0.1), position: 'absolute' }} />
-        <CircularProgress variant="determinate" value={value} size={100} thickness={3} sx={{ color: 'primary.main' }} />
+        <CircularProgress variant="determinate" value={100} size={80} thickness={3} sx={{ color: (theme) => alpha(theme.palette.primary.main, 0.1), position: 'absolute' }} />
+        <CircularProgress variant="determinate" value={value} size={80} thickness={3} sx={{ color: 'primary.main', strokeLinecap: 'round' }} />
         <Box sx={{ position: 'absolute', top: 0, left: 0, bottom: 0, right: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>{Math.round(value)}%</Typography>
+            <Typography variant="h6" sx={{ fontWeight: 800, color: 'primary.main' }}>{Math.round(value)}%</Typography>
+        </Box>
+    </Box>
+);
+
+const ProbabilityBar = ({ label, value, index }) => (
+    <Box sx={{ mb: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', textTransform: 'capitalize' }}>
+                {label.replace(/_/g, ' ')}
+            </Typography>
+            <Typography variant="body2" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                {value}%
+            </Typography>
+        </Box>
+        <Box sx={{ height: 8, width: '100%', bgcolor: (theme) => alpha(theme.palette.divider, 0.5), borderRadius: 4, overflow: 'hidden' }}>
+            <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${value}%` }}
+                transition={{ duration: 1, delay: 0.3 + index * 0.1, ease: "easeOut" }}
+                style={{ height: '100%', backgroundColor: 'currentColor', borderRadius: 4 }}
+                sx={{ color: 'primary.main' }}
+            />
         </Box>
     </Box>
 );
@@ -17,36 +39,74 @@ const CircularProgressWithLabel = ({ value }) => (
 const ResultCard = ({ result, onReset }) => {
     if (!result) return null;
 
+    const topProbabilities = Object.entries(result.probabilities || {}).slice(0, 8);
+
     return (
         <AnimatePresence>
             <motion.div initial={{ opacity: 0, y: 40, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ type: 'spring', stiffness: 100, damping: 15 }}>
-                <Paper sx={{ p: 5, mt: 4, borderRadius: 4, textAlign: 'center', border: '1px solid', borderColor: alpha('#0ea5e9', 0.3), bgcolor: alpha('#0ea5e9', 0.02) }}>
-                    <Box component={motion.div} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                        sx={{ width: 64, height: 64, borderRadius: '50%', bgcolor: alpha('#10b981', 0.1), display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 3 }}>
-                        <CheckCircleOutline sx={{ fontSize: 32, color: '#10b981' }} />
-                    </Box>
-                    <Typography variant="overline" sx={{ color: 'text.secondary', letterSpacing: 2 }}>DETECTED ACTION</Typography>
-                    <Typography variant="h3" sx={{ fontWeight: 700, color: 'text.primary', my: 2, textTransform: 'capitalize' }}>{result.action.replace(/_/g, ' ')}</Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, my: 4 }}>
-                        <Box>
-                            <CircularProgressWithLabel value={result.confidence} />
-                            <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary', fontWeight: 500 }}>Confidence</Typography>
+                <Paper sx={{ p: { xs: 3, md: 5 }, mt: 4, borderRadius: 6, position: 'relative', overflow: 'hidden' }}>
+                    {/* Background Decorative Element */}
+                    <Box sx={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, borderRadius: '50%', background: (theme) => `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.08)} 0%, transparent 70%)`, pointerEvents: 'none' }} />
+
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 6, position: 'relative' }}>
+                        {/* Main Prediction Section */}
+                        <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'left' } }}>
+                            <Box sx={{ width: 48, height: 48, borderRadius: 3, bgcolor: (theme) => alpha(theme.palette.success.main, 0.1), display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3, mx: { xs: 'auto', md: 0 } }}>
+                                <CheckCircleOutline sx={{ fontSize: 24, color: 'success.main' }} />
+                            </Box>
+                            
+                            <Typography variant="overline" sx={{ color: 'text.secondary', letterSpacing: 3, fontWeight: 800 }}>
+                                CLASSIFICATION SUCCESSFUL
+                            </Typography>
+                            <Typography variant="h2" sx={{ fontWeight: 800, color: 'text.primary', my: 1, textTransform: 'capitalize' }}>
+                                {result.action.replace(/_/g, ' ')}
+                            </Typography>
+                            
+                            <Box sx={{ display: 'flex', gap: 4, my: 4, justifyContent: { xs: 'center', md: 'flex-start' } }}>
+                                <Box>
+                                    <CircularProgressWithLabel value={result.confidence} />
+                                    <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary', fontWeight: 700, textAlign: 'center' }}>
+                                        CONFIDENCE
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                    <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                                        {result.processing_time}s
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>
+                                        LATENCY
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
+                                <Button variant="contained" startIcon={<Replay />} onClick={onReset} sx={{ px: 4, py: 1.5 }}>
+                                    Analyze New
+                                </Button>
+                                <Button variant="outlined" startIcon={<Download />} onClick={() => {
+                                    const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = 'prediction_result.json';
+                                    a.click();
+                                }} sx={{ px: 3, borderColor: 'divider', color: 'text.secondary' }}>
+                                    JSON
+                                </Button>
+                            </Box>
                         </Box>
-                        <Box>
-                            <Typography variant="h3" sx={{ fontWeight: 700, color: 'text.primary' }}>{result.processing_time}s</Typography>
-                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>Processing Time</Typography>
+
+                        {/* Probability Distribution Section */}
+                        <Box sx={{ flex: 1.2, borderLeft: { md: '1px solid' }, borderColor: { md: 'divider' }, pl: { md: 6 } }}>
+                            <Typography variant="h6" sx={{ fontWeight: 800, mb: 3 }}>
+                                Probability Distribution
+                            </Typography>
+                            <Box>
+                                {topProbabilities.map(([label, value], index) => (
+                                    <ProbabilityBar key={label} label={label} value={value} index={index} />
+                                ))}
+                            </Box>
                         </Box>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-                        <Button variant="contained" startIcon={<Replay />} onClick={onReset} sx={{ px: 4 }}>Analyze Another</Button>
-                        <Button variant="outlined" startIcon={<Download />} onClick={() => {
-                            const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = 'prediction_result.json';
-                            a.click();
-                        }} sx={{ borderColor: 'divider', color: 'text.secondary', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}>Export</Button>
                     </Box>
                 </Paper>
             </motion.div>

@@ -1,6 +1,13 @@
 import React from 'react';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, IconButton, Tooltip, alpha } from '@mui/material';
-import { HomeOutlined, AnalyticsOutlined, GitHub, AutoAwesome } from '@mui/icons-material';
+import { 
+    HomeOutlined, 
+    AnalyticsOutlined, 
+    InfoOutlined, 
+    GitHub, 
+    AutoAwesome,
+    VideoLibraryOutlined 
+} from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -11,6 +18,8 @@ const Sidebar = () => {
     const menuItems = [
         { text: 'Home', icon: <HomeOutlined />, path: '/' },
         { text: 'Analyze', icon: <AnalyticsOutlined />, path: '/analysis' },
+        { text: 'Library', icon: <VideoLibraryOutlined />, path: '/library' },
+        { text: 'About', icon: <InfoOutlined />, path: '/about' },
     ];
 
     return (
@@ -71,11 +80,11 @@ const Sidebar = () => {
                                     borderRadius: 2,
                                     py: 1.5,
                                     px: 2,
-                                    bgcolor: isActive ? alpha('#0ea5e9', 0.15) : 'transparent',
+                                    bgcolor: isActive ? (theme) => alpha(theme.palette.primary.main, 0.15) : 'transparent',
                                     border: isActive ? '1px solid' : '1px solid transparent',
-                                    borderColor: isActive ? alpha('#0ea5e9', 0.3) : 'transparent',
+                                    borderColor: isActive ? (theme) => alpha(theme.palette.primary.main, 0.3) : 'transparent',
                                     '&:hover': {
-                                        bgcolor: alpha('#0ea5e9', 0.1),
+                                        bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
                                     },
                                     transition: 'all 0.2s ease',
                                 }}
@@ -107,43 +116,6 @@ const Sidebar = () => {
                     );
                 })}
             </List>
-
-            <Box sx={{ p: 2 }}>
-                <Box
-                    sx={{
-                        p: 2.5,
-                        borderRadius: 3,
-                        bgcolor: 'background.default',
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        textAlign: 'center',
-                    }}
-                >
-                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
-                        Built by
-                    </Typography>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', mb: 1.5 }}>
-                        M. Zain Nasir
-                    </Typography>
-                    <Tooltip title="View on GitHub" arrow>
-                        <IconButton
-                            href="https://github.com/mzainnasir010/SmartAction-Recognition"
-                            target="_blank"
-                            size="small"
-                            sx={{
-                                bgcolor: alpha('#0ea5e9', 0.1),
-                                color: 'primary.main',
-                                '&:hover': {
-                                    bgcolor: 'primary.main',
-                                    color: 'white',
-                                },
-                            }}
-                        >
-                            <GitHub fontSize="small" />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            </Box>
         </Box>
     );
 };

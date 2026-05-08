@@ -85,16 +85,26 @@ class InferenceService:
             # Run inference
             with torch.no_grad():
                 outputs = self._model(input_tensor)
-                probabilities = torch.softmax(outputs, dim=1)
-                confidence, predicted_idx = probabilities.max(1)
+                probabilities = torch.softmax(outputs, dim=1)[0]
+                confidence, predicted_idx = probabilities.max(0)
 
             # Decode prediction
             confidence_score = confidence.item() * 100
             predicted_label = self._label_encoder.inverse_transform([predicted_idx.item()])[0]
 
+            # Get all class probabilities
+            all_probabilities = {}
+            classes = self._label_encoder.classes_
+            for i, prob in enumerate(probabilities):
+                all_probabilities[str(classes[i])] = round(prob.item() * 100, 2)
+
+            # Sort probabilities by value descending
+            sorted_probs = dict(sorted(all_probabilities.items(), key=lambda x: x[1], reverse=True))
+
             return {
                 'action': predicted_label,
-                'confidence': round(confidence_score, 2)
+                'confidence': round(confidence_score, 2),
+                'probabilities': sorted_probs
             }
 
         except Exception as e:
