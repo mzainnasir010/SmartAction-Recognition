@@ -2,8 +2,8 @@ Flask==3.0.0
 Flask-CORS==4.0.0
 torch==2.6.0
 torchvision==0.21.0
-opencv-python-headless==4.8.1.78
-numpy==2.1.0
+numpy==1.26.4
+opencv-python-headless==4.9.0.80
 scikit-learn==1.6.1
 Werkzeug==3.0.1
 Pillow==10.4.0
