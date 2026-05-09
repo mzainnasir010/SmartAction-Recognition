@@ -3,19 +3,13 @@ import os
 import uuid
 from ..config import Config
 
-#youtube service function
+COOKIES_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'cookies.txt')
+
 class YouTubeService:
     @staticmethod
     def download_video(url):
         video_id = str(uuid.uuid4())
         output_path = os.path.join(Config.UPLOAD_FOLDER, f"{video_id}.mp4")
-
-        # Use system CA bundle if available (Railway/Linux), else skip cert check
-        ca_bundle = (
-            os.environ.get('SSL_CERT_FILE') or
-            '/etc/ssl/certs/ca-certificates.crt' if os.path.exists('/etc/ssl/certs/ca-certificates.crt')
-            else None
-        )
 
         command = [
             "yt-dlp",
@@ -26,13 +20,21 @@ class YouTubeService:
             "--merge-output-format", "mp4",
             "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
             "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "--extractor-args", "youtube:player_client=mweb",  # mweb bypasses bot check
+            "--extractor-args", "youtube:player_client=ios",
             "-o", output_path,
             url
         ]
 
+        # Add cookies if file exists
+        if os.path.exists(COOKIES_PATH):
+            command += ["--cookies", COOKIES_PATH]
+            print(f"Using cookies from: {COOKIES_PATH}")
+        else:
+            print(f"WARNING: No cookies.txt found at {COOKIES_PATH}")
+
         env = os.environ.copy()
-        if ca_bundle:
+        ca_bundle = '/etc/ssl/certs/ca-certificates.crt'
+        if os.path.exists(ca_bundle):
             env['SSL_CERT_FILE'] = ca_bundle
             env['REQUESTS_CA_BUNDLE'] = ca_bundle
 
