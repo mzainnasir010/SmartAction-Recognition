@@ -4,7 +4,7 @@ from werkzeug.exceptions import RequestEntityTooLarge
 import os
 import time
 from ..services.inference_service import InferenceService
-from ..services.youtube_service import YouTubeService
+
 from ..config import Config
 
 predict_bp = Blueprint('predict', __name__, url_prefix='/api')
@@ -24,13 +24,33 @@ def handle_file_too_large(e):
 def predict():
     filepath = None
     
-    # CASE 1: Video URL (YouTube or Direct Link)
+    # CASE 1: Video URL (Direct Link)
     video_url = request.form.get('video_url')
     if video_url:
-        filepath, error = YouTubeService.download_video(video_url)
-        if not filepath:
+        try:
+            import requests
+            import uuid
+            
+            # Simple validation
+            if not video_url.startswith(('http://', 'https://')):
+                return jsonify({'error': 'Invalid URL format.'}), 400
+                
+            response = requests.get(video_url, stream=True, timeout=30)
+            response.raise_for_status()
+            
+            # Create a unique filename
+            filename = f"{uuid.uuid4()}.mp4"
+            filepath = os.path.join(Config.UPLOAD_FOLDER, filename)
+            
+            # Stream the download to avoid loading entirely into memory
+            with open(filepath, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+                        
+        except Exception as e:
             return jsonify({
-                'error': f'Failed to download video: {error if error else "Unknown error"}. Please ensure the link is accessible.'
+                'error': f'Failed to download video from URL: {str(e)}'
             }), 422
     
     # CASE 2: Uploaded File
