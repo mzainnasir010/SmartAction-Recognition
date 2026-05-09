@@ -8,5 +8,6 @@ scikit-learn==1.6.1
 Werkzeug==3.0.1
 Pillow==10.4.0
 python-dotenv==1.0.0
-yt-dlp==2023.11.16
-certifi==2023.11.17
+yt-dlp==2024.12.13
+certifi==2024.12.14
+requests==2.31.0

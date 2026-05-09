@@ -6,16 +6,19 @@ from ..config import Config
 class YouTubeService:
     @staticmethod
     def download_video(url):
-        """
-        Downloads a YouTube video using yt-dlp CLI subprocess.
-        Returns (filepath, error_message).
-        """
         video_id = str(uuid.uuid4())
         output_path = os.path.join(Config.UPLOAD_FOLDER, f"{video_id}.mp4")
 
+        # Use system CA bundle if available (Railway/Linux), else skip cert check
+        ca_bundle = (
+            os.environ.get('SSL_CERT_FILE') or
+            '/etc/ssl/certs/ca-certificates.crt' if os.path.exists('/etc/ssl/certs/ca-certificates.crt')
+            else None
+        )
+
         command = [
             "yt-dlp",
-            "--no-check-certificates",
+            "--no-check-certificates",   # fallback safety net
             "--no-playlist",
             "--geo-bypass",
             "--max-filesize", "50m",
@@ -28,12 +31,18 @@ class YouTubeService:
             url
         ]
 
+        env = os.environ.copy()
+        if ca_bundle:
+            env['SSL_CERT_FILE'] = ca_bundle
+            env['REQUESTS_CA_BUNDLE'] = ca_bundle
+
         try:
             result = subprocess.run(
                 command,
                 capture_output=True,
                 text=True,
-                timeout=120
+                timeout=120,
+                env=env
             )
 
             if result.returncode != 0:
@@ -52,7 +61,7 @@ class YouTubeService:
             return None, "Download timed out after 120 seconds."
 
         except FileNotFoundError:
-            return None, "yt-dlp not found. Please install it: pip install yt-dlp"
+            return None, "yt-dlp not found. Please run: pip install yt-dlp"
 
         except Exception as e:
             if os.path.exists(output_path):
