@@ -15,6 +15,10 @@ def create_app():
     
     # Register Blueprints
     app.register_blueprint(predict_bp)
+
+    @app.route('/health')
+    def health():
+        return {'status': 'ok'}, 200
     
     # Preload Model (Optional: depends on if we want lazy or eager loading)
     # Eager loading is better for user experience on first request
