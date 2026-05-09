@@ -27,9 +27,11 @@ def predict():
     # CASE 1: Video URL (YouTube or Direct Link)
     video_url = request.form.get('video_url')
     if video_url:
-        filepath = YouTubeService.download_video(video_url)
+        filepath, error = YouTubeService.download_video(video_url)
         if not filepath:
-            return jsonify({'error': 'Failed to download video from URL. Please ensure it is a valid YouTube link.'}), 422
+            return jsonify({
+                'error': f'Failed to download video: {error if error else "Unknown error"}. Please ensure the link is accessible.'
+            }), 422
     
     # CASE 2: Uploaded File
     elif 'video' in request.files:

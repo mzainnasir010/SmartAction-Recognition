@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Snackbar, Alert, CircularProgress } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -44,12 +44,15 @@ const Analysis = () => {
     const [result, setResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const analysisTriggered = useRef(false);
 
     // Handle prefilled video from library
     useEffect(() => {
-        if (location.state?.isFromLibrary && location.state?.prefilledVideoUrl) {
+        if (location.state?.isFromLibrary && location.state?.prefilledVideoUrl && !analysisTriggered.current) {
             const prefilledUrl = location.state.prefilledVideoUrl;
             const prefilledName = location.state.videoName || 'library_video.mp4';
+            
+            analysisTriggered.current = true;
             
             // Set basic state for UI
             setPreviewUrl(prefilledUrl);
@@ -113,7 +116,7 @@ const Analysis = () => {
         }
 
         try {
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const apiUrl = import.meta.env.VITE_API_URL;
             const response = await axios.post(`${apiUrl}/predict`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 timeout: 120000, // 2 minute timeout for large videos

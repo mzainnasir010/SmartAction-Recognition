@@ -13,21 +13,21 @@ class Config:
     LABEL_ENCODER_PATH = os.path.join(MODEL_DIR, 'label_encoder.pkl')
     
     # Hugging Face URLs for model download
-    HF_MODEL_URL = os.getenv('HF_MODEL_URL', "https://huggingface.co/zainnasir010/action-recognition-cnn-lstm/resolve/main/action_recognition_model.pth")
-    HF_ENCODER_URL = os.getenv('HF_ENCODER_URL', "https://huggingface.co/zainnasir010/action-recognition-cnn-lstm/resolve/main/label_encoder.pkl")
+    HF_MODEL_URL = os.environ['HF_MODEL_URL']
+    HF_ENCODER_URL = os.environ['HF_ENCODER_URL']
     
     # Model Architecture Config
-    SEQUENCE_LENGTH = int(os.getenv('SEQUENCE_LENGTH', 20))
+    SEQUENCE_LENGTH = int(os.environ['SEQUENCE_LENGTH'])
     IMG_HEIGHT = 112
     IMG_WIDTH = 112
-    LSTM_HIDDEN = int(os.getenv('LSTM_HIDDEN', 256))
-    LSTM_LAYERS = int(os.getenv('LSTM_LAYERS', 2))      
-    DROPOUT = float(os.getenv('DROPOUT', 0.3))
+    LSTM_HIDDEN = int(os.environ['LSTM_HIDDEN'])
+    LSTM_LAYERS = int(os.environ['LSTM_LAYERS'])      
+    DROPOUT = float(os.environ['DROPOUT'])
     
     # Application Settings
-    CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '*')
+    CORS_ALLOWED_ORIGINS = os.environ['CORS_ALLOWED_ORIGINS']
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
-    MAX_CONTENT_LENGTH = int(os.getenv('MAX_CONTENT_LENGTH', 50 * 1024 * 1024))
+    MAX_CONTENT_LENGTH = int(os.environ['MAX_CONTENT_LENGTH'])
     ALLOWED_EXTENSIONS = {'mp4', 'avi', 'mov'}
 
     @staticmethod
