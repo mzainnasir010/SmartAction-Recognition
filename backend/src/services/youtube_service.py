@@ -19,15 +19,14 @@ class YouTubeService:
 
         command = [
             "yt-dlp",
-            "--no-check-certificates",   # fallback safety net
+            "--no-check-certificates",
             "--no-playlist",
             "--geo-bypass",
             "--max-filesize", "50m",
             "--merge-output-format", "mp4",
             "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
             "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "--add-header", "Referer:https://www.youtube.com/",
-            "--extractor-args", "youtube:player_client=ios,android,web",
+            "--extractor-args", "youtube:player_client=mweb",  # mweb bypasses bot check
             "-o", output_path,
             url
         ]
