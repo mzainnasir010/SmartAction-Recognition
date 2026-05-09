@@ -20,7 +20,7 @@ class YouTubeService:
             "--merge-output-format", "mp4",
             "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
             "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "--extractor-args", "youtube:player_client=web",
+            "--extractor-args", "youtube:player_client=tv_embedded,web",
             "-o", output_path,
             url
         ]
