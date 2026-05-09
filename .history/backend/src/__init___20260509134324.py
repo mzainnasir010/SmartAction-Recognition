@@ -16,10 +16,6 @@ def create_app():
     # Register Blueprints
     app.register_blueprint(predict_bp)
 
-    @app.route('/')
-    def index():
-        return {'status': 'running', 'message': 'SmartAction Recognition API'}, 200
-
     @app.route('/health')
     def health():
         return {'status': 'ok'}, 200
