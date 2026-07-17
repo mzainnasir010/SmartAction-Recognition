@@ -24,11 +24,9 @@ def create_app():
     def health():
         return {'status': 'ok'}, 200
     
-    # Preload Model (Optional: depends on if we want lazy or eager loading)
-    # Eager loading is better for user experience on first request
-    with app.app_context():
-        from .services.inference_service import InferenceService
-        print("Initializing Inference Service...")
-        InferenceService.get_instance()
-        
+    # Model is no longer eager-loaded here.
+    # InferenceService.get_instance() must instead be called lazily
+    # inside predict_controller's request handler (on first prediction call),
+    # so /health can respond immediately without waiting on model load.
+
     return app
