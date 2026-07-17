@@ -13,7 +13,7 @@ class CNNLSTMModel(nn.Module):
     def __init__(self, num_classes, lstm_hidden=256, lstm_layers=2, dropout=0.3):
         super(CNNLSTMModel, self).__init__()
         
-        # ResNet50 backbone (pretrained, frozen)
+        # ResNet50 backbone (pretrained, frozen...)
         resnet = models.resnet50(weights=None)
         self.cnn = nn.Sequential(*list(resnet.children())[:-1])
         
