@@ -26,9 +26,9 @@ def create_app():
     
     # Preload Model (Optional: depends on if we want lazy or eager loading)
     # Eager loading is better for user experience on first request
-    # with app.app_context():
-    #     from .services.inference_service import InferenceService
-    #     print("Initializing Inference Service...")
-    #     InferenceService.get_instance()
+    with app.app_context():
+        from .services.inference_service import InferenceService
+        print("Initializing Inference Service...")
+        InferenceService.get_instance()
         
     return app
