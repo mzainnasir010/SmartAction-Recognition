@@ -43,6 +43,6 @@ Frontend runs on `http://localhost:5173`.
 - **Architecture**: ResNet50 (CNN) + Bidirectional LSTM
 - **Dataset**: UCF-101 (filtered to 8 classes)
 - **Hosted on**: [Hugging Face](https://huggingface.co/zainnasir010/action-recognition-cnn-lstm)
-.
+
 ## Author
 M. Zain Nasir - [GitHub](https://github.com/mzainnasir010)
