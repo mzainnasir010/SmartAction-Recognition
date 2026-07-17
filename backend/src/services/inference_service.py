@@ -1,6 +1,7 @@
 import torch
 import pickle
 import os
+import gc
 import urllib.request
 import tempfile
 import io
@@ -27,17 +28,18 @@ class InferenceService:
         """Load model and label encoder directly from Hugging Face."""
         self._device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         print(f"Loading model on {self._device}...")
-        
+
         # Load label encoder directly from Hugging Face
         print("Fetching label encoder from Hugging Face...")
         try:
             with urllib.request.urlopen(Config.HF_ENCODER_URL) as response:
                 encoder_data = response.read()
             self._label_encoder = pickle.loads(encoder_data)
+            del encoder_data
             print("Label encoder loaded from Hugging Face")
         except Exception as e:
             raise RuntimeError(f"Failed to load label encoder from Hugging Face: {e}")
-        
+
         self._num_classes = len(self._label_encoder.classes_)
         print(f"Loaded {self._num_classes} classes")
 
@@ -49,19 +51,28 @@ class InferenceService:
             dropout=Config.DROPOUT
         )
 
-        # Load model weights directly from Hugging Face
+        # Load model weights directly from Hugging Face (streamed, memory-conscious)
         print("Fetching model from Hugging Face (this may take a moment)...")
         try:
             with urllib.request.urlopen(Config.HF_MODEL_URL) as response:
-                model_data = io.BytesIO(response.read())
+                raw_bytes = response.read()
+            model_data = io.BytesIO(raw_bytes)
+            del raw_bytes  # free the duplicate copy immediately
+            gc.collect()
+
             checkpoint = torch.load(model_data, map_location=self._device, weights_only=False)
+            model_data.close()
+            del model_data
+            gc.collect()
             print("Model downloaded from Hugging Face")
         except Exception as e:
             raise RuntimeError(f"Failed to load model from Hugging Face: {e}")
-        
+
         # Handle DataParallel saved models
         state_dict = checkpoint.get('model_state_dict', checkpoint)
-        
+        del checkpoint
+        gc.collect()
+
         # Remove 'module.' prefix if present (from DataParallel)
         new_state_dict = {}
         for k, v in state_dict.items():
@@ -69,10 +80,21 @@ class InferenceService:
                 new_state_dict[k[7:]] = v
             else:
                 new_state_dict[k] = v
-        
+        del state_dict
+        gc.collect()
+
         self._model.load_state_dict(new_state_dict)
+        del new_state_dict
+        gc.collect()
+
         self._model.to(self._device)
         self._model.eval()
+
+        # Final cleanup after full load
+        gc.collect()
+        if self._device.type == 'cuda':
+            torch.cuda.empty_cache()
+
         print("Model loaded successfully!")
 
     def predict(self, video_path):
@@ -81,12 +103,16 @@ class InferenceService:
             # Extract and preprocess frames
             frames = extract_frames(video_path, Config.SEQUENCE_LENGTH)
             input_tensor = normalize_frames(frames).to(self._device)
+            del frames
 
             # Run inference
             with torch.no_grad():
                 outputs = self._model(input_tensor)
                 probabilities = torch.softmax(outputs, dim=1)[0]
                 confidence, predicted_idx = probabilities.max(0)
+
+            del input_tensor, outputs
+            gc.collect()
 
             # Decode prediction
             confidence_score = confidence.item() * 100
