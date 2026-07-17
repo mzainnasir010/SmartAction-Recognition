@@ -43,7 +43,7 @@ class InferenceService:
         self._num_classes = len(self._label_encoder.classes_)
         print(f"Loaded {self._num_classes} classes")
 
-        # Create model with correct architecture
+        # Create model with correct architecture (no ImageNet weights - random init)
         self._model = CNNLSTMModel(
             num_classes=self._num_classes,
             lstm_hidden=Config.LSTM_HIDDEN,
@@ -83,7 +83,9 @@ class InferenceService:
         del state_dict
         gc.collect()
 
-        self._model.load_state_dict(new_state_dict)
+        # assign=True: use loaded tensors directly instead of copying into
+        # already-allocated model params - avoids doubling memory at this step
+        self._model.load_state_dict(new_state_dict, assign=True)
         del new_state_dict
         gc.collect()
 
