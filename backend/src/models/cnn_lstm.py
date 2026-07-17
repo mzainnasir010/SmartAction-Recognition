@@ -14,7 +14,7 @@ class CNNLSTMModel(nn.Module):
         super(CNNLSTMModel, self).__init__()
         
         # ResNet50 backbone (pretrained, frozen)
-        resnet = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
+        resnet = models.resnet50(weights=None)
         self.cnn = nn.Sequential(*list(resnet.children())[:-1])
         
         # Freeze CNN parameters
